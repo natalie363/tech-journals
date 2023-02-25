@@ -1,0 +1,14 @@
+- hosts: kibana
+  become: true
+  roles:
+    - geerlingguy.java
+    - geerlingguy.elasticsearch
+    - geerlingguy.kibana
+
+  tasks:
+  - name: Firewall Rules
+    firewalld:
+      port: 5601/tcp
+      port: 9200/tcp
+      permanent: true
+      state: enabled

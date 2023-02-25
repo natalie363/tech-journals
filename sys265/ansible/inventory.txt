@@ -1,0 +1,11 @@
+[kibana]
+ansible01-natalie
+[webmin]
+ansible02-natalie
+[windows]
+mgmt01-natalie
+[windows]
+wks01-natalie
+
+[windows:vars]
+ansible_shell_type=powershell
