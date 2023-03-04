@@ -14,6 +14,8 @@
       shell:
         "sudo sed -i -e 's@^SELINUX=enforcing$@SELINUX=disabled@g' /etc/selinux/config && sudo setenforce 0"
       when: selinux_check.stat.exists
+      # This will fail if SELinux is already disabled. This allows the playbook to continue
+      ignore_errors: yes
 
     - name: check if AppArmor exists
       stat:
@@ -24,4 +26,19 @@
       shell:
         "sudo echo 'GRUB_CMDLINE_LINUX_DEFAULT apparmor=0\"'> /etc/default/grub.d/apparmor.cfg && sudo update-grub"
       when: apparmor_check.stat.exists
+
+    - name: Ensure system is up to date (Ubuntu)
+      shell:
+        "sudo apt update -y && sudo apt upgrade -y"
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Ensure system is up to date (CentOS/RedHat)
+      shell:
+        "sudo yum update -y -q"
+      when: ansible_distribution == "CentOS" or ansible_distribution == "Rocky"
+
+    - name: reboot the servers
+      become: yes
+      reboot:
+        reboot_timeout: 300
 
