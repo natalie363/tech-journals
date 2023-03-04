@@ -1,0 +1,4 @@
+[openio]
+ansible01-natalie
+[openio]
+ansible02-natalie

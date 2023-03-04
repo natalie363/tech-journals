@@ -1,0 +1,27 @@
+# This playbook was created by Natalie to get Ansible01 and Ansible02 ready for OpenIO installation
+# It checks if SELinux and AppArmor exist
+# If so, it ensures that SELinux and AppArmor are disabled, then restarts
+
+- name: Ensure prerequisites for installing OpenIO are met
+  hosts: openio 
+  tasks:
+    - name: check if SELinux file exists
+      stat:
+        path: "/etc/selinux/config"
+      register: selinux_check
+
+    - name: disable SELinux
+      shell:
+        "sudo sed -i -e 's@^SELINUX=enforcing$@SELINUX=disabled@g' /etc/selinux/config && sudo setenforce 0"
+      when: selinux_check.stat.exists
+
+    - name: check if AppArmor exists
+      stat:
+        path: "/etc/default/grub.d/apparmor.cfg"
+      register: apparmor_check
+
+    - name: disable AppArmor
+      shell:
+        "sudo echo 'GRUB_CMDLINE_LINUX_DEFAULT apparmor=0\"'> /etc/default/grub.d/apparmor.cfg && sudo update-grub"
+      when: apparmor_check.stat.exists
+
