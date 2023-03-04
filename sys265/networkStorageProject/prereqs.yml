@@ -32,9 +32,19 @@
         "sudo apt update -y && sudo apt upgrade -y"
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-    - name: Ensure system is up to date (CentOS/RedHat)
+    - name: Ensure system is up to date (CentOS/Rocky)
       shell:
         "sudo yum update -y -q"
+      when: ansible_distribution == "CentOS" or ansible_distribution == "Rocky"
+
+    - name: Ubuntu firewall rules
+      shell:
+        "sudo ufw allow 6006/tcp && sudo ufw allow 6006/udp && sudo ufw allow 6007/tcp && sudo ufw allow 6007/udp"
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: CentOS/Rocky Firewall Rules
+      shell:
+        "sudo firewall-cmd --add-port=6006/tcp --permanent && sudo firewall-cmd --add-port=6006/udp --permanent && sudo firewall-cmd --add-port=6007/tcp --permanent && sudo firewall-cmd --add-port=6007/udp --permanent"
       when: ansible_distribution == "CentOS" or ansible_distribution == "Rocky"
 
     - name: reboot the servers
